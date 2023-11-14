@@ -5,7 +5,28 @@ public class EdgeWeightedDigraph extends EdgeWeightedGraph {
   }
 
   public EdgeWeightedDigraph(String filename) {
-    super(filename);
+   
+    this();
+    In in = new In(filename);
+    String line;
+   
+    while ((line = in.readLine()) != null) {
+      int controlador = 0;
+      String[] edge = line.split(" ");
+      String verticeOrigem = edge[edge.length - 1];
+      String verticeDestino;
+      int peso;
+
+      while(!(edge[controlador].equals("->"))){
+        verticeDestino = edge[controlador + 1];
+        peso = Integer.parseInt(edge[controlador]);
+        addEdge(verticeDestino, verticeOrigem, peso);
+        controlador = controlador + 2;
+      }
+  
+    }
+  
+    in.close();
   }
 
   @Override
