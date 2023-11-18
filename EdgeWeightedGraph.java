@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class EdgeWeightedGraph {
+ 
   protected static final String NEWLINE = System.getProperty("line.separator");
-
   protected Map<String, List<Edge>> graph;
   protected Set<String> vertices;
   protected int totalVertices;
@@ -23,10 +23,12 @@ public class EdgeWeightedGraph {
     this();
     In in = new In(filename);
     String line;
-    while ((line = in.readLine()) != null) {
+    
+    while((line = in.readLine()) != null){
       String[] edge = line.split(" ");
       addEdge(edge[0], edge[1], Double.parseDouble(edge[2]));
     }
+   
     in.close();
   }
 
@@ -34,26 +36,37 @@ public class EdgeWeightedGraph {
     Edge e = new Edge(v, w, weight);
     addToList(v, e);
     addToList(w, e);
+    
     if(!vertices.contains(v)) {
       vertices.add(v);
       totalVertices++;
     }
+   
     if(!vertices.contains(w)) {
       vertices.add(w);
       totalVertices++;
     }
+    
     totalEdges += 2;
   }
 
-  public Iterable<Edge> getAdj(String v) {
+  public Iterable<Edge> getAdj(String v){
     List<Edge> res = graph.get(v);
-    if (res == null) res = new LinkedList<>();
+    
+    if(res == null){
+     res = new LinkedList<>();
+    }
+    
     return res;
   }
 
-  public int getTotalVerts() { return totalVertices; }
+  public int getTotalVerts(){ 
+    return totalVertices; 
+  }
   
-  public int getTotalEdges() { return totalEdges; }
+  public int getTotalEdges(){ 
+    return totalEdges;
+  }
 
   public Set<String> getVerts() {
     return vertices;
@@ -61,7 +74,7 @@ public class EdgeWeightedGraph {
 
   public Iterable<Edge> getEdges() {
     Set<Edge> ed = new HashSet<>();
-    for (String v : getVerts().stream().sorted().toList()) {
+    for(String v : getVerts().stream().sorted().toList()) {
       for (Edge e : getAdj(v)) {
         if (!ed.contains(e)) {
           ed.add(e);

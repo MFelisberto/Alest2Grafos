@@ -31,16 +31,20 @@ public class EdgeWeightedDigraph extends EdgeWeightedGraph {
 
   @Override
   public void addEdge(String v, String w, double weight) {
+    
     Edge e = new Edge(v, w, weight);
     addToList(v, e);
+    
     if(!vertices.contains(v)) {
       vertices.add(v);
       totalVertices++;
     }
+    
     if(!vertices.contains(w)) {
       vertices.add(w);
       totalVertices++;
     }
+    
     totalEdges += 2;
     totalEdges++;
   }
@@ -56,4 +60,19 @@ public class EdgeWeightedDigraph extends EdgeWeightedGraph {
     sb.append("}" + NEWLINE);
     return sb.toString();
   }
+
+  public double hidrogenioToGold() {
+    // calcular a quantida de hidrogenios necessarios para fazer um ouro
+    double hydrogenNecessary = 0.0;
+    String source = "hidrogenio";
+    String target = "ouro";
+
+    
+
+    
+
+
+    return hydrogenNecessary;
+  }
+
 }
