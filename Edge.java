@@ -1,10 +1,12 @@
+import java.math.BigInteger;
+
 public class Edge implements Comparable<Edge> {
   
   private String v;
   private String w;
-  private double weight;
+  private BigInteger weight;
 
-  public Edge(String v, String w, double weight) {
+  public Edge(String v, String w, BigInteger weight) {
     this.v = v;
     this.w = w;
     this.weight = weight;
@@ -18,13 +20,13 @@ public class Edge implements Comparable<Edge> {
     return w;
   }
 
-  public double getWeight() {
+  public BigInteger getWeight() {
     return weight;
   }
 
   @Override
   public int compareTo(Edge other) {
-    return Double.compare(this.weight, other.weight);
+    return this.weight.compareTo(other.weight);
   }
 
   @Override

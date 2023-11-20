@@ -3,8 +3,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
+import java.math.BigInteger;
 
 public class EdgeWeightedDigraph{
 
@@ -13,7 +13,7 @@ public class EdgeWeightedDigraph{
   protected Set<String> vertices;
   protected int totalVertices;
   protected int totalEdges;
-
+  
   public EdgeWeightedDigraph(){
     graph = new HashMap<>();
     vertices = new HashSet<>();
@@ -29,10 +29,12 @@ public class EdgeWeightedDigraph{
       String[] edge = line.split(" ");
       String verticeOrigem = edge[edge.length - 1];
       String verticeDestino;
-      int peso;
+      long peso1;
+      BigInteger peso;
       while(!(edge[controlador].equals("->"))){
         verticeDestino = edge[controlador + 1];
-        peso = Integer.parseInt(edge[controlador]);
+        peso1 = Integer.parseInt(edge[controlador]);
+        peso = BigInteger.valueOf(peso1);
         addEdge(verticeDestino, verticeOrigem, peso);
         controlador = controlador + 2;
       }
@@ -41,7 +43,7 @@ public class EdgeWeightedDigraph{
     in.close();
   }
 
-  public void addEdge(String v, String w, double weight) {
+  public void addEdge(String v, String w, BigInteger weight) {
     Edge e = new Edge(v, w, weight);
     addToList(v, e);
     if(!vertices.contains(v)) {
@@ -59,7 +61,7 @@ public class EdgeWeightedDigraph{
   public int getTotalVerts(){return totalVertices;}
   public int getTotalEdges(){return totalEdges;}
   public Set<String> getVerts(){return vertices;}
-
+ 
   public Iterable<Edge> getAdj(String v){
     List<Edge> res = graph.get(v);
     
@@ -91,66 +93,36 @@ public class EdgeWeightedDigraph{
     return list;
   }
 
-  public Map<String, Double> hidrogenioToGold(){
-    
-    Set<String> caminho =  new HashSet<>();
-    Map<String, Double> hydrogenNeeded = new HashMap<>();
-    Queue<String> fila = new LinkedList<>();
-
-    // Inicializa com hidrogênio
-    for(Edge e : getAdj("hidrogenio")){
-      hydrogenNeeded.put(e.getW(), e.getWeight());
-      fila.add(e.getW());
-      caminho.add(e.getW());
-    }
-
-    while(!fila.isEmpty()){
-      
-      String currentElement = fila.poll();
-
-      for(Edge e : getAdj(currentElement)){
-        double currentAmount = hydrogenNeeded.get(currentElement);
-        double newAmount = e.getWeight() * currentAmount;
-
-        // Adiciona ou acumula na quantidade existente
-        hydrogenNeeded.put(e.getW(), hydrogenNeeded.getOrDefault(e.getW(), 0.0) + newAmount);
-
-        // Adiciona à fila para processamento posterior
-        fila.add(e.getW());
-      }
-    }
-
-    return hydrogenNeeded;
+  public BigInteger hidrogenioToGold(){
+    Map<String,BigInteger> dic = new HashMap<>();
+    BigInteger totalHidrogenios = calculateHidroNecssary("hidrogenio",dic);
+    return totalHidrogenios;
   }
 
-  public Map<String, Double> hidrogenioToGoldDFS(String v) {
-    Map<String, Double> hydrogenNeeded = new HashMap<>();
-    Set<String> marked = new HashSet<>();
+  private BigInteger calculateHidroNecssary(String elemento, Map<String,BigInteger> dic){
+    
+    BigInteger totalH = BigInteger.valueOf(0);
 
-    dfs(v, hydrogenNeeded, marked);
-
-    return hydrogenNeeded;
-}
-
-private void dfs(String v, Map<String, Double> hydrogenNeeded, Set<String> marked) {
-    marked.add(v);
-
-    for (Edge e : getAdj(v)) {
-        if (!marked.contains(e.getW())) {
-            double currentAmount = hydrogenNeeded.getOrDefault(v, 1.0);  // Valor acumulado até o nó atual
-            double newAmount = e.getWeight() * currentAmount;
-
-            // Adiciona ou acumula na quantidade existente
-            hydrogenNeeded.put(e.getW(), hydrogenNeeded.getOrDefault(e.getW(), 0.0) + newAmount);
-
-            // Adiciona à fila para processamento posterior
-            dfs(e.getW(), hydrogenNeeded, marked);
-        }
+    if(dic.containsKey(elemento)) {
+      return dic.get(elemento);
     }
-}
-
-
-
+    
+    if(!elemento.equals("ouro"))
+    {
+      for(Edge e : this.getAdj(elemento)){
+        BigInteger hidrogenios = e.getWeight().multiply(calculateHidroNecssary(e.getW(),dic));
+        totalH = totalH.add(hidrogenios);
+      }
+    }
+    else
+    {
+      return BigInteger.valueOf(1);
+    }
+    
+    dic.put(elemento, totalH);
+    return totalH;
+  }
+  
   public String toDot() {
     StringBuilder sb = new StringBuilder();
     sb.append("digraph {" + NEWLINE);
